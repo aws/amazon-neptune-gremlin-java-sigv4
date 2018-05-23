@@ -14,11 +14,13 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.amazonaws</groupId>
     <artifactId>amazon-neptune-gremlin-java-sigv4</artifactId>
     <packaging>jar</packaging>
     <version>1.0</version>
+
     <name>amazon-neptune-gremlin-java-sigv4</name>
     <description>
         A Gremlin client for Amazon Neptune that includes AWS Signature Version 4 signing.
@@ -32,6 +34,7 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+
     <developers>
         <developer>
             <id>amazonwebservices</id>
@@ -43,7 +46,25 @@
         </developer>
     </developers>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
+    <scm>
+        <connection>scm:git:git@github.com:aws/amazon-neptune-sigv4-signer.git</connection>
+        <developerConnection>scm:git:git@github.com:aws/amazon-neptune-sigv4-signer.git</developerConnection>
+        <url>git@github.com:aws/amazon-neptune-sigv4-signer.git</url>
+    </scm>
+
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
@@ -100,30 +121,90 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+
+                    <!-- Package the source jar. -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.0.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Package the javadoc jar. -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.0.0</version>
                         <configuration>
-                            <keyname>${gpg.keyname}</keyname>
-                            <passphrase>${gpg.passphrase}</passphrase>
-                            <gpgArguments>
-                                <arg>--pinentry-mode</arg>
-                                <arg>loopback</arg>
-                            </gpgArguments>
+                            <name>Amazon Neptune Gremlin Java Sigv4</name>
+                            <encoding>UTF-8</encoding>
+                            <bottom>
+                                <![CDATA[<center>Copyright &#169; ${build.year} Amazon.com. All Rights Reserved.</center>]]>
+                            </bottom>
+                            <additionalparam>-Xdoclint:none</additionalparam>
                         </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Sign the artifact -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <keyname>${gpg.keyname}</keyname>
+                                    <passphrase>${gpg.passphrase}</passphrase>
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Publish the artifacts. -->
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.8</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <!-- After GA this flag can be set to true. When false requires to manually release the
+                                 artifacts from https://oss.sonatype.org/#stagingRepositories -->
+                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
