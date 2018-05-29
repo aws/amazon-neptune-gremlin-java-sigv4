@@ -58,10 +58,8 @@ import java.util.concurrent.TimeUnit;
  * different WebSocketClientHandshaker which uses SIGV4 auth. This class should be used as a Channelizer when SIGV4
  * auth is enabled.
  *
- * @see <a href="https://github.com/apache/tinkerpop/blob/master/gremlin-driver/src/main/java/org/apache/tinkerpop/
- * gremlin/driver/Channelizer.java">
- * https://github.com/apache/tinkerpop/blob/master/gremlin-driver/src/main/java/org/apache/tinkerpop/gremlin/
- * driver/Channelizer.java</a>
+ * @see <a href="https://github.com/apache/tinkerpop/blob/master/gremlin-driver/src/main/java/org/apache/tinkerpop/gremlin/driver/Channelizer.java">
+ *      https://github.com/apache/tinkerpop/blob/master/gremlin-driver/src/main/java/org/apache/tinkerpop/gremlin/driver/Channelizer.java</a>
  */
 public class SigV4WebSocketChannelizer extends AbstractChannelizer {
     /**

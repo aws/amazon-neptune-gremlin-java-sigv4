@@ -28,8 +28,6 @@ import org.apache.tinkerpop.gremlin.driver.Result;
 import org.apache.tinkerpop.gremlin.driver.ResultSet;
 import org.apache.tinkerpop.gremlin.driver.SigV4WebSocketChannelizer;
 
-import java.util.Iterator;
-
 /**
  * An example client code to demonstrate the process of making auth enabled Gremlin calls to Neptune Server.
  * If auth is enabled on the server side then the neptune db region should be set either as a system property of as
@@ -43,9 +41,8 @@ import java.util.Iterator;
  *     <li>Passing as JVM arg: -Daws.accessKeyId=[your-access-key-id] and -Daws.secretKey=[your-access-secret].</li>
  * </ol>
  *
- * @see <a href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/
- * DefaultAWSCredentialsProviderChain.html"> DefaultAWSCredentialsProviderChain"</a> for more information and
- * additional methods for providing IAM credentials.
+ * @see <a href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/DefaultAWSCredentialsProviderChain.html">
+ *     DefaultAWSCredentialsProviderChain"</a> for more information and additional methods for providing IAM credentials.
  */
 public final class NeptuneGremlinSigV4Example {
     /**
