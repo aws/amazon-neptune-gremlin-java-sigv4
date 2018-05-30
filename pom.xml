@@ -151,9 +151,9 @@
                             <name>Amazon Neptune Gremlin Java Sigv4</name>
                             <encoding>UTF-8</encoding>
                             <bottom>
-                                <![CDATA[<center>Copyright &#169; ${build.year} Amazon.com. All Rights Reserved.</center>]]>
+                                <![CDATA[<center>Copyright &#169; 2018 Amazon.com. All Rights Reserved.</center>]]>
                             </bottom>
-                            <additionalparam>-Xdoclint:none</additionalparam>
+                            <additionalOptions>-Xdoclint:none</additionalOptions>
                         </configuration>
                         <executions>
                             <execution>
