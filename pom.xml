@@ -58,9 +58,9 @@
     </distributionManagement>
 
     <scm>
-        <connection>scm:git:git@github.com:aws/amazon-neptune-sigv4-signer.git</connection>
-        <developerConnection>scm:git:git@github.com:aws/amazon-neptune-sigv4-signer.git</developerConnection>
-        <url>git@github.com:aws/amazon-neptune-sigv4-signer.git</url>
+        <connection>scm:git:git@github.com:aws/amazon-neptune-gremlin-java-sigv4.git</connection>
+        <developerConnection>scm:git:git@github.com:aws/amazon-neptune-gremlin-java-sigv4.git</developerConnection>
+        <url>git@github.com:aws/amazon-neptune-gremlin-java-sigv4.git</url>
     </scm>
 
     <properties>
