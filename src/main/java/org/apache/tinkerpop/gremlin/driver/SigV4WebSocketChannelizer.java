@@ -100,7 +100,7 @@ public class SigV4WebSocketChannelizer extends AbstractChannelizer {
     /**
      * Handshake timeout.
      */
-    private static final int HANDSHAKE_TIMEOUT_MILLIS = 1500;
+    private static final int HANDSHAKE_TIMEOUT_MILLIS = 15000;
 
     /**
      * The handler to process websocket messages from the server.
