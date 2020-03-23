@@ -53,6 +53,10 @@ public final class NeptuneGremlinSigV4Example {
      * Command line option name for the db cluster/instance port.
      */
     private static final String PORT = "port";
+    /**
+     * Command line option name for the whether to use ssl connection.
+     */
+    private static final String SSL = "ssl";
 
     /**
      * The gremlin query to test.
@@ -80,6 +84,7 @@ public final class NeptuneGremlinSigV4Example {
 
         //If the neptune db is auth enabled then add use the following channelizer. Otherwise omit the below line.
         builder.channelizer(SigV4WebSocketChannelizer.class);
+        builder.enableSsl(Boolean.parseBoolean(cli.getOptionValue(SSL, "false")));
 
 
         final Cluster cluster = builder.create();
@@ -125,6 +130,11 @@ public final class NeptuneGremlinSigV4Example {
         final Option port = new Option("p", PORT, true, "The db cluster/instance port");
         port.setRequired(true);
         options.addOption(port);
+
+        final Option ssl = new Option("s", SSL, true, "Whether to enable ssl on the connection");
+        ssl.setRequired(false);
+        ssl.setType(Boolean.class);
+        options.addOption(ssl);
 
         return options;
     }
