@@ -39,7 +39,7 @@ public class ChainedSigV4PropertiesProvider {
      * Creates an instance with default suppliers.
      */
     public ChainedSigV4PropertiesProvider() {
-        this.providers = new Supplier[]{() -> getSigV4PropertiesFromEnv(), this::getSigV4PropertiesFromSystem};
+        this.providers = new Supplier[]{this::getSigV4PropertiesFromEnv, this::getSigV4PropertiesFromSystem};
     }
 
     /**
