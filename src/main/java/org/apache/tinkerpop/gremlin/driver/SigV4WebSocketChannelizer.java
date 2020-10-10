@@ -38,6 +38,7 @@ import com.amazon.neptune.gremlin.driver.sigv4.AwsSigV4ClientHandshaker;
 import com.amazon.neptune.gremlin.driver.sigv4.ChainedSigV4PropertiesProvider;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
+import io.netty.handler.codec.http.EmptyHttpHeaders;
 import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpObjectAggregator;
@@ -206,7 +207,7 @@ public class SigV4WebSocketChannelizer extends AbstractChannelizer {
                 WebSocketVersion.V13,
                 null,
                 false,
-                HttpHeaders.EMPTY_HEADERS,
+                EmptyHttpHeaders.INSTANCE,
                 cluster.getMaxContentLength(),
                 new ChainedSigV4PropertiesProvider());
         return new WebSocketClientHandler(handshaker);

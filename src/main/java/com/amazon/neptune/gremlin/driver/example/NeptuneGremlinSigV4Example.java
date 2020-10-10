@@ -88,14 +88,16 @@ public final class NeptuneGremlinSigV4Example {
 
 
         final Cluster cluster = builder.create();
-        final Client client = cluster.connect();
-        final ResultSet rs = client.submit(SAMPLE_QUERY);
+        try {
+            final Client client = cluster.connect();
+            final ResultSet rs = client.submit(SAMPLE_QUERY);
 
-        for (Result r : rs) {
-            System.out.println(r);
+            for (Result r : rs) {
+                System.out.println(r);
+            }
+        } finally {
+            cluster.close();
         }
-
-        cluster.close();
     }
 
     /**
