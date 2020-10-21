@@ -40,12 +40,12 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.http.EmptyHttpHeaders;
 import io.netty.handler.codec.http.HttpClientCodec;
-import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketClientHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketVersion;
+import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketClientCompressionHandler;
 import org.apache.tinkerpop.gremlin.driver.Channelizer.AbstractChannelizer;
 import org.apache.tinkerpop.gremlin.driver.exception.ConnectionException;
 import org.apache.tinkerpop.gremlin.driver.handler.WebSocketClientHandler;
@@ -97,6 +97,11 @@ public class SigV4WebSocketChannelizer extends AbstractChannelizer {
      * Name of the GremlinDecoder handler.
      */
     private static final String GRELIN_DECODER = "gremlin-decoder";
+
+    /**
+     * Name of the WebSocket compression handler.
+     */
+    public static final String WEBSOCKET_COMPRESSION_HANDLER = "web-socket-compression-handler";
 
     /**
      * Handshake timeout.
@@ -178,6 +183,8 @@ public class SigV4WebSocketChannelizer extends AbstractChannelizer {
 
         pipeline.addLast(HTTP_CODEC, new HttpClientCodec());
         pipeline.addLast(AGGREGATOR, new HttpObjectAggregator(maxContentLength));
+        // Add compression extension for WebSocket defined in https://tools.ietf.org/html/rfc7692
+        pipeline.addLast(WEBSOCKET_COMPRESSION_HANDLER, WebSocketClientCompressionHandler.INSTANCE);
         pipeline.addLast(WEB_SOCKET_HANDLER, handler);
         pipeline.addLast(GREMLIN_ENCODER, webSocketGremlinRequestEncoder);
         pipeline.addLast(GRELIN_DECODER, webSocketGremlinResponseDecoder);
@@ -202,11 +209,12 @@ public class SigV4WebSocketChannelizer extends AbstractChannelizer {
      * @return the instance of clientHandler.
      */
     private WebSocketClientHandler createHandler() {
+
         WebSocketClientHandshaker handshaker = new AwsSigV4ClientHandshaker(
                 connection.getUri(),
                 WebSocketVersion.V13,
                 null,
-                false,
+                true, // allow extensions to support WebSocket compression
                 EmptyHttpHeaders.INSTANCE,
                 cluster.getMaxContentLength(),
                 new ChainedSigV4PropertiesProvider());
