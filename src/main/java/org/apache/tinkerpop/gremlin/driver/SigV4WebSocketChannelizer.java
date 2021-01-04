@@ -52,7 +52,7 @@ import org.apache.tinkerpop.gremlin.driver.handler.WebSocketClientHandler;
 import org.apache.tinkerpop.gremlin.driver.handler.WebSocketGremlinRequestEncoder;
 import org.apache.tinkerpop.gremlin.driver.handler.WebSocketGremlinResponseDecoder;
 
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * An {@link AbstractChannelizer}, with most of the code from {@link WebSocketChannelizer}. Except it uses a
@@ -102,11 +102,6 @@ public class SigV4WebSocketChannelizer extends AbstractChannelizer {
      * Name of the WebSocket compression handler.
      */
     public static final String WEBSOCKET_COMPRESSION_HANDLER = "web-socket-compression-handler";
-
-    /**
-     * Handshake timeout.
-     */
-    private static final int HANDSHAKE_TIMEOUT_MILLIS = 15000;
 
     /**
      * The handler to process websocket messages from the server.
@@ -193,13 +188,29 @@ public class SigV4WebSocketChannelizer extends AbstractChannelizer {
     @Override
     public void connected() {
         try {
-            // block for a few seconds - if the handshake takes longer 15 seconds than there's gotta be issues with that
-            // server. more than likely, SSL is enabled on the server, but the client forgot to enable it or
-            // perhaps the server is not configured for websockets.
-            handler.handshakeFuture().get(HANDSHAKE_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+            // Block until the handshake is complete either successfully or with an error. The handshake future
+            // will complete with a timeout exception after some time so it is guaranteed that this future will
+            // complete. The timeout for the handshake is configured by cluster.getConnectionSetupTimeout().
+            //
+            // If future completed with an exception more than likely, SSL is enabled on the server, but the client
+            // forgot to enable it or perhaps the server is not configured for websockets.
+            handler.handshakeFuture().sync();
         } catch (Exception ex) {
-            throw new RuntimeException(new ConnectionException(connection.getUri(),
-                    "Could not complete websocket handshake - ensure that client protocol matches server", ex));
+            String errMsg = "";
+            if (ex instanceof TimeoutException) {
+                // Note that we are not using catch(TimeoutException ex) because the compiler throws an error for
+                // catching a checked exception which is not thrown from the code inside try. However, the compiler
+                // check is incorrect since Netty bypasses the compiler check and sync() is able to rethrow underlying
+                // exception even if it is a check exception.
+                // More information about how Netty bypasses compiler check at https://github.com/netty/netty/blob/d371b1bbaa3b98f957f6b025673098ad3adb5131/common/src/main/java/io/netty/util/internal/PlatformDependent.java#L418
+                errMsg = "Timed out while waiting to complete the connection setup. Consider increasing the " +
+                        "WebSocket handshake timeout duration.";
+            } else {
+                errMsg = "Could not complete connection setup to the server. Ensure that SSL is correctly " +
+                        "configured at both the client and the server. Ensure that client WebSocket handshake " +
+                        "protocol matches the server. Ensure that the server is still reachable.";
+            }
+            throw new ConnectionException(connection.getUri(), errMsg, ex);
         }
     }
 
@@ -218,6 +229,6 @@ public class SigV4WebSocketChannelizer extends AbstractChannelizer {
                 EmptyHttpHeaders.INSTANCE,
                 cluster.getMaxContentLength(),
                 new ChainedSigV4PropertiesProvider());
-        return new WebSocketClientHandler(handshaker);
+        return new WebSocketClientHandler(handshaker, cluster.getConnectionSetupTimeout());
     }
 }
