@@ -190,7 +190,8 @@ public class SigV4WebSocketChannelizer extends AbstractChannelizer {
         try {
             // Block until the handshake is complete either successfully or with an error. The handshake future
             // will complete with a timeout exception after some time so it is guaranteed that this future will
-            // complete.
+            // complete. The timeout for the handshake is configured by cluster.getConnectionSetupTimeout().
+            //
             // If future completed with an exception more than likely, SSL is enabled on the server, but the client
             // forgot to enable it or perhaps the server is not configured for websockets.
             handler.handshakeFuture().sync();
