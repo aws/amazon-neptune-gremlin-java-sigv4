@@ -198,6 +198,11 @@ public class SigV4WebSocketChannelizer extends AbstractChannelizer {
         } catch (Exception ex) {
             String errMsg = "";
             if (ex instanceof TimeoutException) {
+                // Note that we are not using catch(TimeoutException ex) because the compiler throws an error for
+                // catching a checked exception which is not thrown from the code inside try. However, the compiler
+                // check is incorrect since Netty bypasses the compiler check and sync() is able to rethrow underlying
+                // exception even if it is a check exception.
+                // More information about how Netty bypasses compiler check at https://github.com/netty/netty/blob/d371b1bbaa3b98f957f6b025673098ad3adb5131/common/src/main/java/io/netty/util/internal/PlatformDependent.java#L418
                 errMsg = "Timed out while waiting to complete the connection setup. Consider increasing the " +
                         "WebSocket handshake timeout duration.";
             } else {
