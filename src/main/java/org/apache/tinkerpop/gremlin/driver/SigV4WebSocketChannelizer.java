@@ -36,6 +36,10 @@ package org.apache.tinkerpop.gremlin.driver;
 
 import com.amazon.neptune.gremlin.driver.sigv4.AwsSigV4ClientHandshaker;
 import com.amazon.neptune.gremlin.driver.sigv4.ChainedSigV4PropertiesProvider;
+
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
+
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.http.EmptyHttpHeaders;
@@ -215,6 +219,16 @@ public class SigV4WebSocketChannelizer extends AbstractChannelizer {
     }
 
     /**
+     * This protected method provides a way for customizing the channelize through inheritance
+     * to override credentials used to establish sign requests
+     *
+     * @return credentials provider that will be used to generate SigV4 signatures
+     */
+    protected AWSCredentialsProvider getCredentialsProvider() {
+        return new DefaultAWSCredentialsProviderChain();
+    }
+
+    /**
      * Creates an instance of {@link WebSocketClientHandler} with {@link AwsSigV4ClientHandshaker} as the handshaker
      * for SigV4 auth.
      * @return the instance of clientHandler.
@@ -228,7 +242,8 @@ public class SigV4WebSocketChannelizer extends AbstractChannelizer {
                 true, // allow extensions to support WebSocket compression
                 EmptyHttpHeaders.INSTANCE,
                 cluster.getMaxContentLength(),
-                new ChainedSigV4PropertiesProvider());
+                new ChainedSigV4PropertiesProvider(),
+                getCredentialsProvider());
         return new WebSocketClientHandler(handshaker, cluster.getConnectionSetupTimeout());
     }
 }

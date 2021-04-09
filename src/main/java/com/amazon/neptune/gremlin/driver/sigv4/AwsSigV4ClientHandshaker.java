@@ -17,6 +17,7 @@ package com.amazon.neptune.gremlin.driver.sigv4;
 
 import java.net.URI;
 
+import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.neptune.auth.NeptuneNettyHttpSigV4Signer;
 import com.amazonaws.neptune.auth.NeptuneSigV4SignerException;
@@ -42,7 +43,12 @@ public class AwsSigV4ClientHandshaker extends WebSocketClientHandshaker13 {
     private final SigV4Properties sigV4Properties;
 
     /**
-     * Creates a new instance.
+     * Credentials provider to use to generate signature
+     */
+    private final AWSCredentialsProvider awsCredentialsProvider;
+
+    /**
+     * Creates a new instance with default credentials provider (for backward compatibility).
      * @param webSocketURL - URL for web socket communications. e.g "ws://myhost.com/mypath". Subsequent web socket
      * frames will be sent to this URL.
      * @param version - Version of web socket specification to use to connect to the server
@@ -52,6 +58,7 @@ public class AwsSigV4ClientHandshaker extends WebSocketClientHandshaker13 {
      * @param maxFramePayloadLength - Maximum length of a frame's payload
      * @param sigV4PropertiesProvider - a properties provider to get sigV4 auth related properties
      */
+    @Deprecated
     public AwsSigV4ClientHandshaker(final URI webSocketURL,
                                     final WebSocketVersion version,
                                     final String subprotocol,
@@ -59,7 +66,41 @@ public class AwsSigV4ClientHandshaker extends WebSocketClientHandshaker13 {
                                     final HttpHeaders customHeaders,
                                     final int maxFramePayloadLength,
                                     final ChainedSigV4PropertiesProvider sigV4PropertiesProvider) {
+        this(
+            webSocketURL,
+            version,
+            subprotocol,
+            allowExtensions,
+            customHeaders,
+            maxFramePayloadLength,
+            sigV4PropertiesProvider,
+            new DefaultAWSCredentialsProviderChain()
+        );
+    }
+
+    /**
+     * Creates a new instance.
+     * @param webSocketURL - URL for web socket communications. e.g "ws://myhost.com/mypath". Subsequent web socket
+     * frames will be sent to this URL.
+     * @param version - Version of web socket specification to use to connect to the server
+     * @param subprotocol - Sub protocol request sent to the server.
+     * @param allowExtensions - Allow extensions to be used in the reserved bits of the web socket frame
+     * @param customHeaders - Map of custom headers to add to the client request
+     * @param maxFramePayloadLength - Maximum length of a frame's payload
+     * @param sigV4PropertiesProvider - a properties provider to get sigV4 auth related properties
+     * @param awsCredentialsProvider - an AWS credentials provider to use to generate signature
+     */
+    public AwsSigV4ClientHandshaker(final URI webSocketURL,
+                                    final WebSocketVersion version,
+                                    final String subprotocol,
+                                    final boolean allowExtensions,
+                                    final HttpHeaders customHeaders,
+                                    final int maxFramePayloadLength,
+                                    final ChainedSigV4PropertiesProvider sigV4PropertiesProvider,
+                                    final AWSCredentialsProvider awsCredentialsProvider
+                                    ) {
         super(webSocketURL, version, subprotocol, allowExtensions, customHeaders, maxFramePayloadLength);
+        this.awsCredentialsProvider = awsCredentialsProvider;
         this.sigV4PropertiesProvider = sigV4PropertiesProvider;
         this.sigV4Properties = loadProperties();
     }
@@ -86,7 +127,7 @@ public class AwsSigV4ClientHandshaker extends WebSocketClientHandshaker13 {
         final NeptuneNettyHttpSigV4Signer sigV4Signer;
         try {
             sigV4Signer = new NeptuneNettyHttpSigV4Signer(this.sigV4Properties.getServiceRegion(),
-                    new DefaultAWSCredentialsProviderChain());
+                    awsCredentialsProvider);
             sigV4Signer.signRequest(request);
         } catch (NeptuneSigV4SignerException e) {
             throw new RuntimeException("Exception occurred while signing the request", e);
