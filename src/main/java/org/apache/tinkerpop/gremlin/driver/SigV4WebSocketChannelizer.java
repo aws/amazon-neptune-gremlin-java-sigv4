@@ -46,7 +46,6 @@ import io.netty.handler.codec.http.EmptyHttpHeaders;
 import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketClientHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketClientCompressionHandler;
@@ -134,20 +133,6 @@ public class SigV4WebSocketChannelizer extends AbstractChannelizer {
     }
 
     /**
-     * Keep-alive is supported through the ping/pong websocket protocol.
-     * @see <a href=https://tools.ietf.org/html/rfc6455#section-5.5.2>IETF RFC 6455</a>
-     */
-    @Override
-    public boolean supportsKeepAlive() {
-        return true;
-    }
-
-    @Override
-    public Object createKeepAliveMessage() {
-        return new PingWebSocketFrame();
-    }
-
-    /**
      * Sends a {@code CloseWebSocketFrame} to the server for the specified channel.
      */
     @Override
@@ -200,7 +185,7 @@ public class SigV4WebSocketChannelizer extends AbstractChannelizer {
             // forgot to enable it or perhaps the server is not configured for websockets.
             handler.handshakeFuture().sync();
         } catch (Exception ex) {
-            String errMsg = "";
+            final String errMsg;
             if (ex instanceof TimeoutException) {
                 // Note that we are not using catch(TimeoutException ex) because the compiler throws an error for
                 // catching a checked exception which is not thrown from the code inside try. However, the compiler
