@@ -134,20 +134,6 @@ public class SigV4WebSocketChannelizer extends AbstractChannelizer {
     }
 
     /**
-     * Keep-alive is supported through the ping/pong websocket protocol.
-     * @see <a href=https://tools.ietf.org/html/rfc6455#section-5.5.2>IETF RFC 6455</a>
-     */
-    @Override
-    public boolean supportsKeepAlive() {
-        return true;
-    }
-
-    @Override
-    public Object createKeepAliveMessage() {
-        return new PingWebSocketFrame();
-    }
-
-    /**
      * Sends a {@code CloseWebSocketFrame} to the server for the specified channel.
      */
     @Override

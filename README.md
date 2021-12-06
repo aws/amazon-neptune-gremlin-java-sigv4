@@ -14,6 +14,8 @@ For the official Amazon Neptune page refer to: https://aws.amazon.com/neptune
 
 2.x - This series uses TinkerPop 3.4.x client. This major version tracks the latest stable release for this package. Note that a minor version (y in 2.x.y) is bumped whenever a new version of Apache TinkerPop is added as a dependency or a major feature is introduced. All minor versions in 2.x series are backward compatible.
 
+3.x - This series uses TinkerPop 3.5.x client. This version is present for legacy continuity reasons as starting with 2.4.0 (which uses TinkerPop 3.4.11) use of the `HandshakeInterceptor` in `gremlin-driver` is the preferred method for sigv4 signing as discussed [here](https://docs.aws.amazon.com/neptune/latest/userguide/iam-auth-connecting-gremlin-java.html#iam-auth-connecting-gremlin-java-current).
+
 For more information on compatibility with Amazon Neptune engine releases, see [Use the Latest Version of the Gremlin Java Client](https://docs.aws.amazon.com/neptune/latest/userguide/best-practices-gremlin-java-latest.html). 
 
 ## License
