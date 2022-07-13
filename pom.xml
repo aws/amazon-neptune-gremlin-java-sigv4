@@ -19,7 +19,7 @@
     <groupId>com.amazonaws</groupId>
     <artifactId>amazon-neptune-gremlin-java-sigv4</artifactId>
     <packaging>jar</packaging>
-    <version>2.4.0</version>
+    <version>2.4.1</version>
 
     <name>amazon-neptune-gremlin-java-sigv4</name>
     <description>
@@ -123,7 +123,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
-            <version>4.1.63.Final</version>
+            <version>4.1.79.Final</version>
         </dependency>
 
         <!-- Test -->
