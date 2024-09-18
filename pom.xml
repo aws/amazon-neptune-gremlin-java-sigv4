@@ -19,7 +19,7 @@
     <groupId>com.amazonaws</groupId>
     <artifactId>amazon-neptune-gremlin-java-sigv4</artifactId>
     <packaging>jar</packaging>
-    <version>2.4.1</version>
+    <version>3.0.1</version>
 
     <name>amazon-neptune-gremlin-java-sigv4</name>
     <description>
@@ -111,9 +111,24 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
         <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>http-auth-aws</artifactId>
+            <version>2.25.13</version>
+        </dependency>
+        <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-core</artifactId>
-            <version>1.11.1009</version>
+            <version>1.12.772</version>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>auth</artifactId>
+            <version>2.25.13</version>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>utils</artifactId>
+            <version>2.25.13</version>
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
