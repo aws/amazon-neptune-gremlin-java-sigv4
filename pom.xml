@@ -19,7 +19,7 @@
     <groupId>com.amazonaws</groupId>
     <artifactId>amazon-neptune-gremlin-java-sigv4</artifactId>
     <packaging>jar</packaging>
-    <version>3.1.0</version>
+    <version>3.1.1-SNAPSHOT</version>
 
     <name>amazon-neptune-gremlin-java-sigv4</name>
     <description>
