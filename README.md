@@ -17,7 +17,7 @@ For the official Amazon Neptune page refer to: https://aws.amazon.com/neptune
 
 3.x - This series continues use of TinkerPop 3.4.x client and was incremented to simply match the major increment to the [amazon-neptune-sigv4-signer](https://github.com/aws/amazon-neptune-sigv4-signer).
 
-For more information on compatibility with Amazon Neptune engine releases, see [Use the Latest Version of the Gremlin Java Client](https://docs.aws.amazon.com/neptune/latest/userguide/best-practices-gremlin-java-latest.html). 
+Releases of [amazon-neptune-sigv4-signer](https://github.com/aws/amazon-neptune-sigv4-signer) after 3.x no longer track version with this library as the signer can be used directly for request signing in the driver, as mentioned above. For more information on compatibility with Amazon Neptune engine releases, see [Use the Latest Version of the Gremlin Java Client](https://docs.aws.amazon.com/neptune/latest/userguide/best-practices-gremlin-java-latest.html).
 
 ## License
 
