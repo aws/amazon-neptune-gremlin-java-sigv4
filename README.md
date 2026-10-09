@@ -7,17 +7,21 @@ shipped a custom `Channelizer` and `WebSocketClientHandshaker` to do it.
 
 Apache TinkerPop has since added first-class support for this:
 
-- `Cluster.Builder.handshakeInterceptor(...)` — added in TinkerPop 3.5.5
-- `Cluster.Builder.requestInterceptor(...)` — added in TinkerPop 3.6.6
+- `Cluster.Builder.handshakeInterceptor(...)`, added in TinkerPop 3.5.5
+- `Cluster.Builder.requestInterceptor(...)`, added in TinkerPop 3.6.6
 
 Every currently supported (non end-of-life) [Amazon Neptune engine release](https://docs.aws.amazon.com/neptune/latest/userguide/engine-releases.html)
-requires a Gremlin client of at least TinkerPop 3.6.2 (engine release 1.2.0.0, GA'd 2023-03-08,
-raised the minimum supported client version), so every supported Neptune cluster can already use
-`requestInterceptor()` directly. There is no supported Neptune version for which this library is
-still required.
+requires a Gremlin client of at least TinkerPop 3.6.2. See the
+[TinkerPop/Neptune engine version compatibility table](https://docs.aws.amazon.com/neptune/latest/userguide/access-graph-gremlin.html)
+for the minimum/maximum TinkerPop version supported by each Neptune engine release. Every
+engine version in that table (1.1.1.0 and newer) supports a TinkerPop client that already has
+`requestInterceptor()` (3.6.6+) or at least `handshakeInterceptor()` (3.5.5+), so every supported
+Neptune cluster can already use one of these hooks directly. Only engine versions 1.1.0.0 and
+older, themselves marked deprecated in that table, predate this, and there is no supported
+Neptune version for which this library is still required.
 
 **Use [`amazon-neptune-sigv4-signer`](https://github.com/aws/amazon-neptune-sigv4-signer) directly
-with `Cluster.Builder.requestInterceptor(...)` instead** — see [Migration](#migration) below, and
+with `Cluster.Builder.requestInterceptor(...)` instead.** See [Migration](#migration) below, and
 the official guide: [Connecting to Amazon Neptune databases using IAM with Gremlin Java](https://docs.aws.amazon.com/neptune/latest/userguide/iam-auth-connecting-gremlin-java.html).
 
 This repository is archived and will not receive further updates, including dependency or
